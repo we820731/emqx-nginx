@@ -3,17 +3,36 @@ services:
   emqx:
     image: emqx/emqx:5.8.3
     container_name: emqx
+    hostname: emqx-cluster.emqx.io
+    restart: always
+    ports:
+      - "18083:18083"
+    volumes:
+      - /deploy/emqx/data:/opt/emqx/data
+      - /deploy/emqx/log:/opt/emqx/log
+      - /deploy/emqx/etc:/opt/emqx/etc
+    environment:
+      - EMQX_ALLOW_ANONYMOUS=false
+      - EMQX_NODE_NAME=emqx@emqx-cluster.emqx.io
+    networks:
+      - emqx-net
+
+  nginx:
+    image: nginx:latest
+    container_name: mqtt_nginx
     restart: always
     ports:
       - "1883:1883"
+      - "8883:8883"
       - "8083:8083"
       - "8084:8084"
-      - "8883:8883"
-      - "18083:18083"
+      - "8888:8888" # nginx status
     volumes:
-      - $PWD/data:/opt/emqx/data
-      - $PWD/log:/opt/emqx/log
-      - $PWD/etc:/opt/emqx/etc  
-      - $PWD/certs:/opt/emqx/certs
-    environment:
-      - EMQX_ALLOW_ANONYMOUS=false
+      - $PWD/nginx.conf:/etc/nginx/nginx.conf
+      - $PWD/certs:/etc/nginx/certs
+    networks:
+      - emqx-net
+
+networks:
+  emqx-net:
+    driver: bridge
