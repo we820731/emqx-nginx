@@ -11,9 +11,9 @@ services:
       - "8883:8883"
       - "18083:18083"
     volumes:
-      - /deploy/emqx/data:/opt/emqx/data
-      - /deploy/emqx/log:/opt/emqx/log
-      - /deploy/emqx/etc:/opt/emqx/etc  
-      - /deploy/emqx/certs:/opt/emqx/certs
+      - $PWD/data:/opt/emqx/data
+      - $PWD/log:/opt/emqx/log
+      - $PWD/etc:/opt/emqx/etc  
+      - $PWD/certs:/opt/emqx/certs
     environment:
       - EMQX_ALLOW_ANONYMOUS=false
